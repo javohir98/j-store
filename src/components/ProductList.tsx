@@ -49,11 +49,16 @@ export default function ProductList({ apiUrl, className }: ProductListProps) {
   }
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 ${className ?? ""}`}>
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
+    <div className="container !mx-auto">
+      <div
+        className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 ${
+          className ?? ""
+        }`}
+      >
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
     </div>
   );
 }
-
