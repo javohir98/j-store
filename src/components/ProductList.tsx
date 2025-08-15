@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import ProductCard, { Product } from "./ProductCard";
+import { useQuery } from "@tanstack/react-query";
 
 interface ProductListProps {
   apiUrl: string;
@@ -9,42 +9,25 @@ interface ProductListProps {
 }
 
 export default function ProductList({ apiUrl, className }: ProductListProps) {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: products = [], isLoading } = useQuery<Product[]>({
+    queryKey: ["products", apiUrl],
+    queryFn: async () => {
+      const res = await fetch(apiUrl);
+      const data = await res.json();
+      const items: Array<Record<string, unknown>> = Array.isArray(data)
+        ? data
+        : data.products || [];
+      return items.map((p) => ({
+        id: Number(p.id),
+        title: String(p.title),
+        description: String(p.description),
+        price: p.price as number,
+        image: (p.image || p.thumbnail || "") as string,
+      }));
+    },
+  });
 
-  useEffect(() => {
-    let ignore = false;
-    async function load() {
-      try {
-        const res = await fetch(apiUrl);
-        const data = await res.json();
-        const items: Array<Record<string, unknown>> = Array.isArray(data)
-          ? data
-          : data.products || [];
-        if (!ignore) {
-          setProducts(
-            items.map((p) => ({
-              id: Number(p.id),
-              title: String(p.title),
-              description: String(p.description),
-              price: p.price as number,
-              image: (p.image || p.thumbnail || "") as string,
-            }))
-          );
-        }
-      } catch (e) {
-        console.error(e);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      ignore = true;
-    };
-  }, [apiUrl]);
-
-  if (loading) {
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
