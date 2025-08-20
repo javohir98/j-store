@@ -11,14 +11,14 @@ export type Product = {
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="bg-white border rounded-lg p-3 flex flex-col transition-shadow hover:shadow-md">
+    <div className="relative rounded-lg p-3 flex flex-col">
       <Link href={`/product/${product.id}`} className="flex flex-col flex-grow">
-        <div className="relative w-full aspect-square mb-3">
+        <div className="relative w-full aspect-square !mb-3 !p-3 bg-[#f3f2f0] rounded-lg overflow-hidden">
           <Image
             src={product.image}
             alt={product.title}
             fill
-            className="object-contain p-2"
+            className="object-contain !p-3 hover:scale-105 transition-transform duration-200"
           />
         </div>
         <h3 className="text-sm font-medium text-gray-800 line-clamp-2 min-h-[2.5rem]">
@@ -27,11 +27,13 @@ export default function ProductCard({ product }: { product: Product }) {
       </Link>
       <div className="mt-2 flex items-center justify-between">
         <span className="font-semibold text-red-600">
-          {typeof product.price === "number" ? product.price.toLocaleString() : product.price}
+          {typeof product.price === "number"
+            ? product.price.toLocaleString()
+            : product.price}
         </span>
         <button
           aria-label="Add to favourites"
-          className="text-gray-400 hover:text-red-500 transition-colors"
+          className="text-gray-400 hover:text-red-500 transition-colors cursor-pointer absolute top-3 right-3"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
